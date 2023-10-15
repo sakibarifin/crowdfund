@@ -1,0 +1,12 @@
+
+
+.landing-page {
+    
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-repeat: repeat;
+    background-color: rgb(2, 2, 59);
+    min-height: 100vh;
+  }
+  

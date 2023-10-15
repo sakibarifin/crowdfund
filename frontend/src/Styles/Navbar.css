@@ -1,0 +1,97 @@
+
+.navbar {
+    /* Set the background color */
+    font-family: 'Comic Neue', cursive;
+   color:  #433F30;
+   padding: 10px 0;
+   display: flex; /* Use flexbox to make the children (logo-container and navbar-list) side by side */
+   justify-content: space-between; /* Spread the children to the left and right */
+   align-items: center;
+ }
+ 
+ 
+ 
+ .navbar-item {
+   margin-right: 100px;
+   margin-top: 30px;
+   margin-left: 100px; /* Adjust the spacing between items as needed */
+   font-size: 2em; /* Enlarge the font size */
+   color: #fff;
+   cursor: pointer;
+ }
+ .navbar-item:hover {
+     color: green; /* Change the color on hover if desired */
+ }
+ 
+ .navbar-item:first-child {
+   margin-left: 0px; /* Remove left margin from the first item */
+ }
+ 
+ .search-icon,
+ 
+ .menu-icon {
+     font-size: 2.5em; /* Increase the font size for the hamburger menu icon */
+     cursor: pointer; /* Add a pointer cursor for interaction */
+ }
+ 
+ .menu-icon:hover {
+     color: green; /* Change the color on hover if desired */
+ }
+ 
+ /* Style for navbar links */
+ .navbar-link {
+     text-decoration: none; /* Remove underlines */
+     color: inherit; /* Inherit the color from the parent (.navbar) */
+   }
+   
+   .navbar-link:hover {
+     text-decoration: underline;
+     color: green; /* Change link color on hover */
+   }
+ 
+   /* Style for the logo image */
+ .logo-image {
+     margin-top: 30px;
+      margin-left: 50px;
+      width: auto; /* Set width to auto to maintain aspect ratio */
+      height: 100px;
+      /* Adjust the logo width as needed */
+ }
+ .logo-container {
+     margin-top: 30px;
+     margin-left: 30px;
+     display: flex; /* Use flexbox to align the image and link horizontally */
+     align-items: center; /* Vertically align items in the middle */
+     
+   }
+   
+   .navbar-list {
+     list-style: none;
+     padding: 0;
+     display: flex; /* Use flexbox to align list items horizontally */
+     justify-content: flex-end; /* Right justify the items */
+     align-items: center; /* Vertically align items in the middle */
+   }
+
+
+   .button{
+    background-color: #dcdcdc ;
+    border: 2px solid #422800;
+    width: 180px;
+    height: 40px;
+    
+    margin-left: 10%;
+    border-radius: 30px;
+    box-shadow: #422800 4px 4px 0 0;
+    justify-content: center; /* Horizontally center text */
+    align-items: center; /* Vertically center text */
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .button:hover {
+    background-color: #dcdcdc ;
+  }
+  .button:active {
+    box-shadow: #422800 2px 2px 0 0;
+    transform: translate(2px, 2px);
+  }

@@ -1,0 +1,72 @@
+.Project {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns with equal width */
+    grid-gap: 20px; /* Adjust the gap between cards as needed */
+  }
+.Buttondiv{
+    margin-top: 2%;
+    margin-left: 20%;
+}
+  
+.search-bar {
+    font-family: 'Comic Neue', cursive; 
+    margin-top: 20px; /* Added top-margin */
+    width: 80%; /* Set width to 80% of the viewport width */
+    margin-left: auto; /* Center the search bar horizontally */
+    margin-right: auto; /* Center the search bar horizontally */
+    
+  }
+  
+  .search-bar input {
+    font-family: 'Comic Neue', cursive; 
+    width: 100%;
+    padding: 10px;
+    font-size: 24px;
+    border: 2px solid green; /* Remove the border */
+    border-radius: 20px; /* Add rounded corners */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    outline: none;
+    height: 40px; /* Increase the height */
+    
+  }
+  
+  .search-bar:hover {
+    /* Scale up by 5% on hover */
+   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  }
+  
+  .search-icon-container {
+    position: absolute;
+    margin-top: 30px;
+    margin-left: 10px;
+    transform: translateY(-50%);
+  }
+  
+  .search-icon-container i {
+    font-size: 20px; /* Adjust the size of the search icon */
+    color: #333; /* Adjust the color of the icon */
+  }
+
+  .Buttondiv .button{
+    background-color: #eec63a;
+    border: 2px solid #422800;
+    width: 360px;
+    height: 80px;
+    margin-top: 40px;
+    margin-left: 60px;
+    border-radius: 30px;
+    box-shadow: #422800 4px 4px 0 0;
+    justify-content: center; /* Horizontally center text */
+    align-items: center; /* Vertically center text */
+    cursor: pointer;
+    touch-action: manipulation;
+    font-size: 30px;
+  }
+  .button:hover {
+    background-color: #efcf5d;
+    transform: translate(2px, 2px);
+  }
+  .button:active {
+    box-shadow: #422800 2px 2px 0 0;
+    transform: translate(2px, 2px);
+  }

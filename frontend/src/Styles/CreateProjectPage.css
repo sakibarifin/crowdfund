@@ -1,0 +1,60 @@
+
+
+  .centerForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+  }
+.createProjectPage {
+    background-color: #dcdcdc;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+    text-align: center;
+    border-color: #808080;
+  }
+  
+  .createProjectPage h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+    margin-right: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group input {
+    width: 50%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 24px;
+  }
+  
+  button[type='submit'] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 24px;
+    border: 4px navy;
+    border-radius: 4px;
+  }
+  
+  button[type='submit']:hover {
+    background-color: #0056b3;
+  }
