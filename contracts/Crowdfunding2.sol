@@ -99,12 +99,8 @@ contract CrowdFunding2 is Ownable {
 
         campaign.donators.push(msg.sender);
         campaign.donations.push(amount);
+        campaign.amountCollected += amount;
 
-        (bool sent,) = payable(address(this)).call{value: amount}("");
-
-        if(sent) {
-            campaign.amountCollected = campaign.amountCollected + amount;
-        }
     }
 
     function isCampaignSuccessful(uint256 _id) public view returns(bool){
