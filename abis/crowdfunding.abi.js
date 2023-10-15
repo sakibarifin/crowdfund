@@ -27,6 +27,37 @@
 		"type": "error"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "currentTime",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "implementationDeadline",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "votingDeadline",
+				"type": "uint256"
+			}
+		],
+		"name": "checkVotingTimeError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "votingNotBackerError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "votingStatusError",
+		"type": "error"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -43,6 +74,271 @@
 			}
 		],
 		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "pledgeDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "implementationDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votingDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDisbursed",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct CrowdFunding2.MILESTONE",
+				"name": "firstMilestone",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "pledgeDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "implementationDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votingDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDisbursed",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct CrowdFunding2.MILESTONE",
+				"name": "secondMilestone",
+				"type": "tuple"
+			},
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "pledgeDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "implementationDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "votingDeadline",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "isDisbursed",
+						"type": "bool"
+					}
+				],
+				"indexed": false,
+				"internalType": "struct CrowdFunding2.MILESTONE",
+				"name": "thirdMilestone",
+				"type": "tuple"
+			}
+		],
+		"name": "createCampaignEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "campaignOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "disburseFeeEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "donator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "donationAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "donateToCampaignEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "bool",
+				"name": "result",
+				"type": "bool"
+			}
+		],
+		"name": "isCampaignSuccessfulEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "enum CrowdFunding2.STATE",
+				"name": "campaignState",
+				"type": "uint8"
+			},
+			{
+				"indexed": true,
+				"internalType": "enum CrowdFunding2.STATUS",
+				"name": "votingStatus",
+				"type": "uint8"
+			},
+			{
+				"indexed": true,
+				"internalType": "enum CrowdFunding2.STATUS",
+				"name": "campaignStatus",
+				"type": "uint8"
+			}
+		],
+		"name": "quromReachedEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "campaignOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum CrowdFunding2.STATE",
+				"name": "campaignState",
+				"type": "uint8"
+			}
+		],
+		"name": "returnFeeEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignIndex",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "voter",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "bool",
+				"name": "votingValue",
+				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum CrowdFunding2.STATE",
+				"name": "campaignState",
+				"type": "uint8"
+			}
+		],
+		"name": "votingEvent",
 		"type": "event"
 	},
 	{
