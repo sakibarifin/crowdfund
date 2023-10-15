@@ -139,15 +139,27 @@ contract CrowdFunding2 is Ownable {
         return allCampaigns;
     }
 
-    // function disburseFee(uint256 _id) public onlyOwner{
-    //     Campaign storage campaign = campaigns[_id];
-    //     require(campaign.campaignStatus == STATUS.PENDING);
-    //     if (campaign.campaignState == STATE.FIRST_MILESTONE && campaign.firstMilestone.isDisbursed == false) {
-    //         address payable owner = campaign.owner;
-    //         uint256 amount = (campaign.goal * 30) / 100 ;
-    //         owner.transfer(amount);
-    //         campaign.firstMilestone.isDisbursed = true;
-    //     }
+    function disburseFee(uint256 _id) public onlyOwner{
+        Campaign storage campaign = campaigns[_id];
+        require(campaign.campaignStatus == STATUS.PENDING);
+        if (campaign.campaignState == STATE.FIRST_MILESTONE && campaign.firstMilestone.isDisbursed == false) {
+            address payable owner = campaign.owner;
+             uint256 amount = (campaign.goal * 30) / 100 ;
+            owner.transfer(amount);
+            campaign.firstMilestone.isDisbursed = true;
+        }
+        if (campaign.campaignState == STATE.SECOND_MILESTONE && campaign.secondMilestone.isDisbursed == false) {
+            address payable owner = campaign.owner;
+            uint256 amount = (campaign.goal * 35) / 100 ;
+            owner.transfer(amount);
+            campaign.secondMilestone.isDisbursed = true;
+        }
+        if (campaign.campaignState == STATE.THIRD_MILESTONE && campaign.thirdMilestone.isDisbursed == false) {
+            address payable owner = campaign.owner;
+            uint256 amount = (campaign.goal * 35) / 100 ;
+            owner.transfer(amount);
+            campaign.thirdMilestone.isDisbursed = true;
+        }
 
-    // }
+    }
 }
