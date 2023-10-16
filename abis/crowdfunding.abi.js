@@ -27,6 +27,11 @@
 		"type": "error"
 	},
 	{
+		"inputs": [],
+		"name": "alreadyVotedError",
+		"type": "error"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -49,7 +54,12 @@
 	},
 	{
 		"inputs": [],
-		"name": "votingNotBackerError",
+		"name": "donateToCampaignError",
+		"type": "error"
+	},
+	{
+		"inputs": [],
+		"name": "notBackerError",
 		"type": "error"
 	},
 	{
@@ -112,6 +122,11 @@
 						"internalType": "bool",
 						"name": "isDisbursed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
+						"type": "bool"
 					}
 				],
 				"indexed": false,
@@ -140,6 +155,11 @@
 						"internalType": "bool",
 						"name": "isDisbursed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
+						"type": "bool"
 					}
 				],
 				"indexed": false,
@@ -167,6 +187,11 @@
 					{
 						"internalType": "bool",
 						"name": "isDisbursed",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
 						"type": "bool"
 					}
 				],
@@ -397,6 +422,11 @@
 						"internalType": "bool",
 						"name": "isDisbursed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct CrowdFunding2.MILESTONE",
@@ -424,6 +454,11 @@
 						"internalType": "bool",
 						"name": "isDisbursed",
 						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct CrowdFunding2.MILESTONE",
@@ -450,6 +485,11 @@
 					{
 						"internalType": "bool",
 						"name": "isDisbursed",
+						"type": "bool"
+					},
+					{
+						"internalType": "bool",
+						"name": "isExpired",
 						"type": "bool"
 					}
 				],
@@ -526,6 +566,11 @@
 				"internalType": "uint256",
 				"name": "_id",
 				"type": "uint256"
+			},
+			{
+				"internalType": "enum CrowdFunding2.STATE",
+				"name": "state",
+				"type": "uint8"
 			}
 		],
 		"name": "donateToCampaign",
@@ -585,6 +630,11 @@
 								"internalType": "bool",
 								"name": "isDisbursed",
 								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isExpired",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct CrowdFunding2.MILESTONE",
@@ -612,6 +662,11 @@
 								"internalType": "bool",
 								"name": "isDisbursed",
 								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isExpired",
+								"type": "bool"
 							}
 						],
 						"internalType": "struct CrowdFunding2.MILESTONE",
@@ -638,6 +693,11 @@
 							{
 								"internalType": "bool",
 								"name": "isDisbursed",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isExpired",
 								"type": "bool"
 							}
 						],
@@ -714,9 +774,45 @@
 				"internalType": "uint256",
 				"name": "_id",
 				"type": "uint256"
+			},
+			{
+				"internalType": "enum CrowdFunding2.STATE",
+				"name": "state",
+				"type": "uint8"
 			}
 		],
-		"name": "isCampaignSuccessful",
+		"name": "getVoters",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "voter",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "value",
+						"type": "bool"
+					}
+				],
+				"internalType": "struct CrowdFunding2.Vote[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "isGoalAchieved",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -792,7 +888,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "returnFee",
+		"name": "returnFeeIfFailed",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -806,42 +902,6 @@
 			}
 		],
 		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum CrowdFunding2.STATE",
-				"name": "state",
-				"type": "uint8"
-			}
-		],
-		"name": "updateCampaignState",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "enum CrowdFunding2.STATUS",
-				"name": "status",
-				"type": "uint8"
-			}
-		],
-		"name": "updateCampaignStatus",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

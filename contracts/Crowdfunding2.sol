@@ -276,21 +276,24 @@ contract CrowdFunding2 is Ownable {
 
         if(campaign.campaignState == STATE.FIRST_MILESTONE) {
             if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
-                address payable owner = campaign.owner;
+                address backer = msg.sender;
                 uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 70) / 100 ;
                 donateTrack[_id][campaign.campaignState][msg.sender] = 0;
-                owner.transfer(amount);
-                emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
+                //bool success = backer.send(amount);
+                (bool sent, ) = backer.call{value:amount}("");
+                //backer.transfer(amount);
+                if(sent) emit returnFeeEvent(_id, backer, amount, campaign.campaignState);
             }
             
         }
         else if(campaign.campaignState == STATE.SECOND_MILESTONE) {
             if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
-                address payable owner = campaign.owner;
+                address backer = msg.sender;
                 uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 35) / 100 ;
                 donateTrack[_id][campaign.campaignState][msg.sender] = 0;
-                owner.transfer(amount);
-                emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
+                (bool sent, ) = backer.call{value:amount}("");
+                //owner.transfer(amount);
+                if(sent) emit returnFeeEvent(_id, backer, amount, campaign.campaignState);
             }
         }
     }
