@@ -114,9 +114,6 @@ contract CrowdFunding2 is Ownable {
     error notBackerError();
     error donateToCampaignError();
 
-
-    constructor() Ownable(msg.sender) {}
-
     function createCampaign(address payable _owner, string memory _title, uint256 _goal, string memory _category, string memory _subcategory) public returns (uint256) {
         require(_owner != address(0), "address can not be zero");
         require(_goal > 0, "Goal amount should be greater than zero!");

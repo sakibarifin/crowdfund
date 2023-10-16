@@ -59,8 +59,6 @@ contract CrowdFunding2 is Ownable {
 
     uint256 public numberOfCampaigns = 0;
 
-    constructor() Ownable(msg.sender) {}
-
     function createCampaign(address payable _owner, string memory _title, string memory _description, uint256 _goal, string memory _image) public returns (uint256) {
         Campaign storage campaign = campaigns[numberOfCampaigns];
 
