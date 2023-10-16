@@ -2,7 +2,7 @@ const {ethers} = require("hardhat");
 
 async function main() {
 
-  const Crowdfunding = await ethers.deployContract("Crowdfunding");
+  const Crowdfunding = await ethers.deployContract("contracts/Crowdfunding2.sol:CrowdFunding2");
 
   await Crowdfunding.waitForDeployment();
 
