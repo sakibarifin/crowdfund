@@ -28,6 +28,7 @@ contract CrowdFunding2 is Ownable {
         uint256 implementationDeadline;
         uint256 votingDeadline;
         bool isDisbursed;
+        bool isExpired;
     }
     struct Campaign {
         address payable owner;
@@ -109,12 +110,16 @@ contract CrowdFunding2 is Ownable {
         uint256 votingDeadline
     );
     error votingStatusError();
-    error votingNotBackerError();
+    error alreadyVotedError();
+    error notBackerError();
+    error donateToCampaignError();
 
 
     constructor() Ownable(msg.sender) {}
 
     function createCampaign(address payable _owner, string memory _title, string memory _description, uint256 _goal, string memory _image) public returns (uint256) {
+        require(_owner != address(0), "address can not be zero");
+        require(_goal > 0, "Goal amount should be greater than zero!");
         Campaign storage campaign = campaigns[numberOfCampaigns];
 
         require(campaign.deadline < block.timestamp, "The deadline should be a date in the future.");
@@ -132,19 +137,22 @@ contract CrowdFunding2 is Ownable {
             pledgeDeadline: currentTime + MILESTONE_TIME_CONSTANT,
             implementationDeadline: currentTime + MILESTONE_TIME_CONSTANT + IMPLEMENTATION_TIME_CONSTANT, 
             votingDeadline: currentTime + MILESTONE_TIME_CONSTANT + IMPLEMENTATION_TIME_CONSTANT + VOTING_TIME_CONSTANT,
-            isDisbursed: false
+            isDisbursed: false,
+            isExpired: false
         });
         campaign.secondMilestone = MILESTONE({
             pledgeDeadline: 0,
             implementationDeadline: campaign.firstMilestone.votingDeadline + IMPLEMENTATION_TIME_CONSTANT,
             votingDeadline : campaign.firstMilestone.votingDeadline + IMPLEMENTATION_TIME_CONSTANT + VOTING_TIME_CONSTANT,
-            isDisbursed: false
+            isDisbursed: false,
+            isExpired: false
         });
         campaign.thirdMilestone = MILESTONE({
             pledgeDeadline: 0,
             implementationDeadline: campaign.secondMilestone.votingDeadline + IMPLEMENTATION_TIME_CONSTANT,
             votingDeadline : campaign.secondMilestone.votingDeadline + IMPLEMENTATION_TIME_CONSTANT + VOTING_TIME_CONSTANT,
-            isDisbursed: false
+            isDisbursed: false,
+            isExpired: false
         }); 
         campaign.campaignState = STATE.FIRST_MILESTONE;
         campaign.campaignStatus = STATUS.PENDING;
@@ -156,19 +164,19 @@ contract CrowdFunding2 is Ownable {
         return numberOfCampaigns - 1;
     }
 
-    function updateCampaignState(uint256 _id, STATE state) public onlyOwner {
-        Campaign storage campaign = campaigns[_id];
+    // function updateCampaignState(uint256 _id, STATE state) public onlyOwner {
+    //     Campaign storage campaign = campaigns[_id];
 
-        campaign.campaignState = state;
-    }
+    //     campaign.campaignState = state;
+    // }
 
-    function updateCampaignStatus(uint256 _id, STATUS status) public onlyOwner {
-        Campaign storage campaign = campaigns[_id];
+    // function updateCampaignStatus(uint256 _id, STATUS status) public onlyOwner {
+    //     Campaign storage campaign = campaigns[_id];
 
-        campaign.campaignStatus = status;
-    } 
+    //     campaign.campaignStatus = status;
+    // } 
 
-    function donateToCampaign(uint256 _id) public payable {
+    function donateToCampaign(uint256 _id, STATE state) public payable {
 
         require(msg.value > 0, "Donating value must be greater than zero");
 
@@ -177,6 +185,15 @@ contract CrowdFunding2 is Ownable {
         Campaign storage campaign = campaigns[_id];
 
         require(campaign.campaignStatus == STATUS.PENDING, "Can not pledge!");
+        require(block.timestamp <= campaign.firstMilestone.pledgeDeadline, "First Milestone pleadge deadline is over!");
+
+        if(state == STATE.FIRST_MILESTONE && campaign.firstMilestone.isExpired){
+            revert donateToCampaignError();
+        }else if(state == STATE.SECOND_MILESTONE && campaign.secondMilestone.isExpired){
+            revert donateToCampaignError();
+        }else if(state == STATE.THIRD_MILESTONE && campaign.thirdMilestone.isExpired){
+            revert donateToCampaignError();
+        }
 
         campaign.donators.push(msg.sender);
         campaign.donations.push(amount);
@@ -187,8 +204,10 @@ contract CrowdFunding2 is Ownable {
         emit donateToCampaignEvent(msg.sender, _id, msg.value);
     }
 
-    function isCampaignSuccessful(uint256 _id) public view returns(bool){
+    function isGoalAchieved(uint256 _id) public view returns(bool){
+        
         Campaign storage campaign = campaigns[_id];
+        require(campaign.owner != address(0), "Campaign not found!");
         
         uint256[] memory donations = campaign.donations;
         uint256 target = 0;
@@ -204,6 +223,7 @@ contract CrowdFunding2 is Ownable {
     }
 
     function getDonators(uint256 _id) view public returns (address[] memory, uint256[] memory) {
+        require(campaigns[_id].owner != address(0), "Campaign not found!");
         return (campaigns[_id].donators, campaigns[_id].donations);
     }
 
@@ -245,14 +265,20 @@ contract CrowdFunding2 is Ownable {
         }
     }
 
-    function returnFee(uint256 _id) external {
+    function returnFeeIfFailed(uint256 _id) external {
         Campaign storage campaign = campaigns[_id];
+        require(campaign.owner != address(0), "Campaign not found!");
         require(campaign.campaignStatus == STATUS.FAILED, "Can not return fee");
+
+        if(donateTrack[_id][STATE.FIRST_MILESTONE][msg.sender] == 0){
+            revert notBackerError();
+        }
 
         if(campaign.campaignState == STATE.FIRST_MILESTONE) {
             if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
                 address payable owner = campaign.owner;
                 uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 70) / 100 ;
+                donateTrack[_id][campaign.campaignState][msg.sender] = 0;
                 owner.transfer(amount);
                 emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
             }
@@ -262,11 +288,36 @@ contract CrowdFunding2 is Ownable {
             if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
                 address payable owner = campaign.owner;
                 uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 35) / 100 ;
+                donateTrack[_id][campaign.campaignState][msg.sender] = 0;
                 owner.transfer(amount);
                 emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
             }
         }
     }
+
+    // function returnFeeIfGoalFailed(uint256 _id) external {
+    //     Campaign storage campaign = campaigns[_id];
+    //     require(campaign.owner == address(0), "Campaign not found!");
+    //     require(campaign.campaignStatus == STATUS.FAILED, "Can not return fee");
+
+    //     if(campaign.campaignState == STATE.FIRST_MILESTONE) {
+    //         if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
+    //             address payable owner = campaign.owner;
+    //             uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 70) / 100 ;
+    //             owner.transfer(amount);
+    //             emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
+    //         }
+            
+    //     }
+    //     else if(campaign.campaignState == STATE.SECOND_MILESTONE) {
+    //         if(donateTrack[_id][campaign.campaignState][msg.sender] > 0){
+    //             address payable owner = campaign.owner;
+    //             uint256 amount = (donateTrack[_id][campaign.campaignState][msg.sender] * 35) / 100 ;
+    //             owner.transfer(amount);
+    //             emit returnFeeEvent(_id, owner, amount, campaign.campaignState);
+    //         }
+    //     }
+    // }
 
     modifier checkVotingTime(uint256 _id, STATE state) {
         Campaign storage campaign = campaigns[_id];
@@ -306,14 +357,19 @@ contract CrowdFunding2 is Ownable {
     }
 
     function voting(uint256 _id, bool voteValue, STATE state) public checkVotingTime(_id, state) {
+
+        require(campaigns[_id].owner != address(0), "Campaign not found!");
         
         //require(voteStatus[_id][state] == STATUS.PENDING, "Voting is not in the Pending state");
         if(voteStatus[_id][state] != STATUS.PENDING){
             revert votingStatusError();
         }
-        //require(votingTrack[_id][state][msg.sender] == false, "You are not a backer");
+        if(donateTrack[_id][STATE.FIRST_MILESTONE][msg.sender] == 0){
+            revert notBackerError();
+        }
+        //require(votingTrack[_id][state][msg.sender] == false, "Already voted!");
         if(votingTrack[_id][state][msg.sender]){
-            revert votingNotBackerError();
+            revert alreadyVotedError();
         }
         
         Vote memory vote = Vote({
@@ -328,10 +384,23 @@ contract CrowdFunding2 is Ownable {
         emit votingEvent(_id, msg.sender, voteValue, state);
     }
 
+    function getVoters(uint256 _id, STATE state) public view returns(Vote[] memory){
+        require(campaigns[_id].owner != address(0), "Campaign not found!");
+        return votingDetails[_id][state];
+    }
+
     function quromReached(uint256 _id, STATE state) public quromReachedTime(_id, state) returns(bool) {
 
+        require(campaigns[_id].owner != address(0), "Campaign not found!");
+
+        if(voteStatus[_id][state] != STATUS.PENDING){
+            revert votingStatusError();
+        }
+        
         uint256 votersLen = votingDetails[_id][state].length;
         Campaign storage campaign = campaigns[_id];
+
+        require(campaign.campaignStatus == STATUS.PENDING, "Campaign status is not Pending");
 
         uint256 yesVotersCount = 0;
         uint256 noVotersCount = 0;
@@ -348,11 +417,20 @@ contract CrowdFunding2 is Ownable {
         }
 
         if(yesVotersCount >= noVotersCount) {
+            disburseFee(_id);
            voteStatus[_id][state] = STATUS.SUCCESSFUL;
-           if (campaign.campaignState == STATE.FIRST_MILESTONE) campaign.campaignState = STATE.SECOND_MILESTONE;
-           else if (campaign.campaignState == STATE.SECOND_MILESTONE) campaign.campaignState = STATE.THIRD_MILESTONE;
-           else if (campaign.campaignState == STATE.THIRD_MILESTONE) campaign.campaignStatus = STATUS.SUCCESSFUL;
-           disburseFee(_id);
+           if (campaign.campaignState == STATE.FIRST_MILESTONE) {
+             campaign.campaignState = STATE.SECOND_MILESTONE;
+             campaign.firstMilestone.isExpired = true;
+           }
+           else if (campaign.campaignState == STATE.SECOND_MILESTONE) {
+            campaign.campaignState = STATE.THIRD_MILESTONE;
+            campaign.secondMilestone.isExpired = true;
+           }
+           else if (campaign.campaignState == STATE.THIRD_MILESTONE) {
+             campaign.campaignStatus = STATUS.SUCCESSFUL;
+             campaign.thirdMilestone.isExpired = true;
+           }
            emit quromReachedEvent(_id, campaign.campaignState, STATUS.SUCCESSFUL, campaign.campaignStatus);
            return true;
         }else {
