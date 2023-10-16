@@ -33,14 +33,14 @@ contract CrowdFunding2 is Ownable {
     struct Campaign {
         address payable owner;
         string title;
-        string description;
         uint256 goal;
         uint256 deadline;
         MILESTONE firstMilestone;
         MILESTONE secondMilestone;
         MILESTONE thirdMilestone;
         uint256 amountCollected;
-        string image;
+        string category;
+        string subcategory;
         address[] donators;
         uint256[] donations;
         STATE campaignState;
@@ -117,7 +117,7 @@ contract CrowdFunding2 is Ownable {
 
     constructor() Ownable(msg.sender) {}
 
-    function createCampaign(address payable _owner, string memory _title, string memory _description, uint256 _goal, string memory _image) public returns (uint256) {
+    function createCampaign(address payable _owner, string memory _title, uint256 _goal, string memory _category, string memory _subcategory) public returns (uint256) {
         require(_owner != address(0), "address can not be zero");
         require(_goal > 0, "Goal amount should be greater than zero!");
         Campaign storage campaign = campaigns[numberOfCampaigns];
@@ -126,10 +126,10 @@ contract CrowdFunding2 is Ownable {
 
         campaign.owner = _owner;
         campaign.title = _title;
-        campaign.description = _description;
         campaign.goal = _goal;
         campaign.amountCollected = 0;
-        campaign.image = _image;
+        campaign.category = _category;
+        campaign.subcategory = _subcategory;
 
         uint256 currentTime = block.timestamp;
         
@@ -442,5 +442,32 @@ contract CrowdFunding2 is Ownable {
             emit quromReachedEvent(_id, campaign.campaignState, STATUS.FAILED, campaign.campaignStatus);
            return false;
         }
+    }
+
+    function stringsEquals(string memory s1, string memory s2) private pure returns (bool) {
+    bytes memory b1 = bytes(s1);
+    bytes memory b2 = bytes(s2);
+    uint256 l1 = b1.length;
+    if (l1 != b2.length) return false;
+    for (uint256 i=0; i<l1; i++) {
+        if (b1[i] != b2[i]) return false;
+    }
+    return true;
+}
+
+    function getGoalSuggestion(string memory _category, string memory _subcategory) public view returns(uint256) {
+
+        uint256 totalGoal = 0;
+        uint256 campaignCount = 0;
+        for(uint i = 0; i < numberOfCampaigns; i++) {
+            Campaign storage campaign = campaigns[i];
+
+            if(stringsEquals(campaign.category, _category) && stringsEquals(campaign.subcategory, _subcategory)){
+               totalGoal += campaign.goal;
+               campaignCount++;
+            }
+        }
+
+        return totalGoal/campaignCount;
     }
 }

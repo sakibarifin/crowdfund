@@ -387,11 +387,6 @@
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "description",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "goal",
 				"type": "uint256"
@@ -504,7 +499,12 @@
 			},
 			{
 				"internalType": "string",
-				"name": "image",
+				"name": "category",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "subcategory",
 				"type": "string"
 			},
 			{
@@ -534,18 +534,18 @@
 				"type": "string"
 			},
 			{
-				"internalType": "string",
-				"name": "_description",
-				"type": "string"
-			},
-			{
 				"internalType": "uint256",
 				"name": "_goal",
 				"type": "uint256"
 			},
 			{
 				"internalType": "string",
-				"name": "_image",
+				"name": "_category",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_subcategory",
 				"type": "string"
 			}
 		],
@@ -592,11 +592,6 @@
 					{
 						"internalType": "string",
 						"name": "title",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "description",
 						"type": "string"
 					},
 					{
@@ -712,7 +707,12 @@
 					},
 					{
 						"internalType": "string",
-						"name": "image",
+						"name": "category",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "subcategory",
 						"type": "string"
 					},
 					{
@@ -763,6 +763,30 @@
 				"internalType": "uint256[]",
 				"name": "",
 				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_category",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_subcategory",
+				"type": "string"
+			}
+		],
+		"name": "getGoalSuggestion",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
